@@ -1,55 +1,74 @@
 import React, { Component } from 'react'
-import {Text, TouchableOpacity, Image, View} from 'react-native'
+import {Text, TouchableOpacity, Image, View, FlatList} from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-//import { ProductList } from './styles'
+import {
+  Container,
+  Product,
+  ProductImage,
+  ProductTitle,
+  ProductPrice,
+  AddButton,
+  ProductAmount,
+  ProductAmountText,
+  AddButtonText,
+} from './styles'
 import api from '../../services/api'
-import { formatPrice } from '../../util/format'
+//import { formatPrice } from '../../util/format'
 import * as CartActions from '../../store/modules/cart/actions'
 
 class Home extends Component {
   state = {
-    products: []
+    products: ["1","2","3","4","5"]
   }
-
   async componentDidMount(){
     const response = await api.get('products')
     const data = response.data.map(product => ({
       ...product,
-      priceFormatted: formatPrice(product.price)
+      priceFormatted: product.price
     }))
 
     this.setState({products: data})
 
   }
-
   handleAddProduct = id => {
     const { addToCartRequest } = this.props
     addToCartRequest(id)
   }
-
+  renderProduct = ({ item }) => {
+    const { amount } = this.props
+    return (
+      <Product key={item.id}>
+        <ProductImage source={{ uri: item.image }} />
+        <ProductTitle>{item.title}</ProductTitle>
+        <ProductPrice>{item.price}</ProductPrice>
+        <AddButton onPress={() => this.handleAddProduct(item.id)}>
+          <ProductAmount>
+              <Icon name="add-shopping-cart" color="#FFF" size={20} />
+            <ProductAmountText>{amount[item.id] || 0}
+            </ProductAmountText>
+          </ProductAmount>
+          <AddButtonText>ADICIONAR</AddButtonText>
+        </AddButton>
+      </Product>
+    )
+  }
   render(){
     const { products } = this.state
     const { amount } =  this.props
     return (
-      <View>
-        {products.map(product => (
+      <Container>
         <View>
-          <Image source={product.image}/>
-          <Text> {product.title} </Text>
-          <Text> {product.priceFormatted} </Text>
-
-          <TouchableOpacity onPress={()=>this.handleAddProduct(product.id)}>
-            <View>
-              <Icon name="local-grocery-store" size={16} color="#fff" /> {amount[product.id] || 0}
-            </View>
-            <Text> ADICIONAR AO CARRINHO </Text>
-          </TouchableOpacity>
-
+          <FlatList
+            horizontal
+            data={products}
+            extraData={this.props}
+            keyExtractor={item => String(item.id)}
+            renderItem={this.renderProduct}
+          />
         </View>
-        ))}
-      </View>
+      </Container>
     );
   }
 }

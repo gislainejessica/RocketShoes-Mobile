@@ -5,7 +5,7 @@ import { Container, ProductTable, Total } from "./styles";
 import { connect } from "react-redux";
 import * as CartActions from "../../store/modules/cart/actions";
 import { bindActionCreators } from "redux";
-import { formatPrice } from "../../util/format";
+// import { formatPrice } from "../../util/format";
 
 function Cart({ cart, removeFromCart, updateAmountRequest, total }) {
   function increment(product) {
@@ -34,7 +34,7 @@ function Cart({ cart, removeFromCart, updateAmountRequest, total }) {
               </td>
               <td>
                 <strong>{product.title}</strong>
-                <span> {product.priceFormatted} </span>
+                <span> {product.price} </span>
               </td>
               <td>
                 <div>
@@ -75,7 +75,7 @@ function Cart({ cart, removeFromCart, updateAmountRequest, total }) {
 const mapStateToProps = state => ({
   cart: state.cart.map(product => ({
     ...product,
-    subTotal: formatPrice(product.price * product.amount)
+    subTotal: product.price * product.amount
   })),
   total: formatPrice(
     state.cart.reduce((total, product) => {

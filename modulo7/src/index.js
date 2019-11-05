@@ -1,18 +1,17 @@
 import React from 'react';
-import {Provider} from 'react-redux';
-//import {ToastContainer} from 'react-toastify';
+import { Provider } from 'react-redux';
+import { StatusBar } from 'react-native';
 import './config/ReactotronConfig';
 import store from './store';
-import Header from './components/Header';
 //import GlobalStyle from './styles/global';
 
-//import Routes from './routes';
+import Routes from './routes';
 
 function App() {
   return (
    <Provider store={store}>
-      <Header />
-
+      <StatusBar barStyle='light-content' />
+      <Routes />
     </Provider>
   );
 }
